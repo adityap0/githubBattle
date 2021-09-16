@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+import React from "react";
+import Header from "./component/Header";
+import Card from "./component/Card";
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      allStars: null,
+      lang: "language",
+    };
+  }
+  handleLanguage = (lang) => {
+    this.setState((prevState) => {
+      return {
+        lang: lang,
+      };
+    });
+  };
+  componentDidMount() {
+    fetch(
+      `https://api.github.com/search/repositories?q=stars:%3E1+css:JavaScript&sort=stars&order=desc&type=Repositories`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          allStars: data.items,
+        });
+      });
+  }
+  render() {
+    return (
+      <>
+        <Header
+          allStars={this.state.allStars}
+          handleLanguage={this.handleLanguage}
+        />
+        {this.state.allStars ? <Card allStars={this.state.allStars} /> : null}
+      </>
+    );
+  }
 }
 
 export default App;
